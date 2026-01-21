@@ -2,12 +2,12 @@ routes = [
     {
         "id": 1,
         "name": "Ruta Centro - Norte",
-        "status": "activa"
+        "status": "active"
     },
     {
         "id": 2,
         "name": "Ruta Sur - Centro",
-        "status": "suspendida"
+        "status": "suspended"
     }
 ]
 
@@ -15,6 +15,6 @@ alerts = [
     {
         "id": 1,
         "route_id": 2,
-        "message": "Servicio suspendido por mantenimiento"
+        "message": "Service suspended for maintenance"
     }
 ]
