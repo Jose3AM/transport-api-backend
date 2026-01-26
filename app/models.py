@@ -8,7 +8,7 @@ class RouteModel(Base):
     name = Column(String, nullable=False)
     status = Column(String, nullable=False)
 
-class Alert(Base):
+class AlertModel(Base):
     __tablename__ = "alerts"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -2,23 +2,20 @@ from app.repositories.routes_repository import get_all_routes, get_route_by_id
 from app.database import SessionLocal
 from app.models import RouteModel
 
-def fetch_routes():
-    return get_all_routes()
-
-def fetch_route_by_id(route_id: int):
-    return get_route_by_id(route_id)
-
-def get_all_routes(status: str | None = None):
+def get_all_routes(status: str | None = None,
+    limit: int = 10,
+    offset: int = 0
+):
     db = SessionLocal()
     query = db.query(RouteModel)
     
     if status:
         query = query.filter(RouteModel.status == status)
 
-    routes = query.all()
+    total = query.count()
+    routes = query.offset(offset).limit(limit).all()
     db.close()
-    return routes
-
+    return routes, total
 
 def get_route_by_id(route_id: int):
     db = SessionLocal()

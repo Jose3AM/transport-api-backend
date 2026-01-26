@@ -1,5 +1,5 @@
-from app.models import Alert
+from app.models import AlertModel
 from sqlalchemy.orm import Session
 
 def get_all_alerts(db: Session):
-    return db.query(Alert).all()
+    return db.query(AlertModel).all()

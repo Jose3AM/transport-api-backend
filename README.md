@@ -30,11 +30,12 @@ The project follows a layered architecture:
 -   **repositories/** → database access layer\
 -   **models.py** → database models (SQLAlchemy)\
 -   **schemas.py** → response and validation schemas (Pydantic)\
+-   **security.py** → API key authentication and authorization\
 -   **errors.py** → centralized error messages\
 -   **database.py** → database configuration and session management
 
-This separation improves **maintainability, scalability, and
-testability**.
+This architecture improves maintainability, scalability, testability,
+and security.
 
 ------------------------------------------------------------------------
 
@@ -66,6 +67,23 @@ The API will be available at:
 
 ------------------------------------------------------------------------
 
+## Authentication
+
+Most endpoints are protected using an API Key.
+
+The API key must be sent using the header:
+
+-   `X-API-Key: super-secret-key`
+
+Authentication behavior:
+
+-   `401 Unauthorized` → Missing API key\
+-   `403 Forbidden` → Invalid API key
+
+The **/health** endpoint is public and does not require authentication.
+
+------------------------------------------------------------------------
+
 ## Health Check
 
 **GET /health**
@@ -83,15 +101,19 @@ Verifies that the API is running correctly.
 ## Available Endpoints
 
 -   **GET /health**\
-    Checks API status
+    Public health check
 
 -   **GET /routes**\
-    Returns a list of available transport routes
+    Returns a paginated list of transport routes
+    -   Pagination: limit, offset
+    -   Filtering: status=active | suspended
+    -   Requires API Key
 
 -   **GET /routes/{id}**\
     Returns a specific route by ID
 
     -   `404` if the route does not exist
+    -   Requires API Key
 
 -   **GET /routes?status=active\|suspended**\
     Filters routes by status
@@ -99,45 +121,59 @@ Verifies that the API is running correctly.
     -   `422` if the status value is invalid
 
 -   **GET /alerts**\
-    Alerts endpoint prepared for future database integration
+    Endpoint prepared for future database integration
+    -   Requires API Key
 
 ------------------------------------------------------------------------
 
-## Example Response
+## Pagination Response Format
 
 **GET /routes**
 
 ``` json
-[
-  {
-    "id": 1,
-    "name": "Route Downtown - North",
-    "status": "active"
-  },
-  {
-    "id": 2,
-    "name": "Route South - Downtown",
-    "status": "suspended"
-  }
-]
+{
+  "total": 25,
+  "limit": 10,
+  "offset": 0,
+  "data": [
+    {
+      "id": 1,
+      "name": "Route Downtown - North",
+      "status": "active"
+    }
+  ]
+}
 ```
 
 ------------------------------------------------------------------------
 
 ## Error Handling
 
-The API uses explicit and consistent error handling:
+The API uses global error handling with predictable JSON responses:
 
 -   `404 Not Found` → Resource does not exist\
--   `422 Unprocessable Entity` → Invalid input or query parameters
+-   `422 Unprocessable Entity` → Invalid input or query parameters\
+-   `401 Unauthorized` → Missing API key\
+-   `403 Forbidden` → Invalid API key
 
-Error responses are returned as structured JSON objects.
+------------------------------------------------------------------------
+
+## Testing
+
+Automated tests with Pytest cover:
+
+-   Routes behavior and validation\
+-   Pagination and filtering\
+-   Security (API key enforcement)\
+-   Health endpoint isolation
+
+All tests are passing and aligned with the API contract.
 
 ------------------------------------------------------------------------
 
 ## API Documentation
 
-FastAPI automatically generates interactive documentation:
+FastAPI provides interactive documentation:
 
 -   Swagger UI: `/docs`\
 -   ReDoc: `/redoc`
@@ -146,9 +182,18 @@ FastAPI automatically generates interactive documentation:
 
 ## Project Status
 
-This project is under active development.
+Core backend features are complete:
 
-Planned next steps: - Alerts database integration\
-- Authentication\
-- Extended test coverage\
-- Data ingestion from external sources
+-   Database-backed routes\
+-   Clean layered architecture\
+-   API key security\
+-   Pagination and filtering\
+-   Global error handling\
+-   High test coverage
+
+Next planned steps:
+
+-   Alerts database integration\
+-   API versioning\
+-   Extended metadata and analytics\
+-   External data ingestion
