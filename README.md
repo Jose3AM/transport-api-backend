@@ -98,31 +98,53 @@ Verifies that the API is running correctly.
 
 ------------------------------------------------------------------------
 
+## API Versioning
+
+All functional endpoints are exposed under the /api/v1 prefix.
+This allows the API to evolve without breaking existing clients.
+
+Example:
+
+**/api/v1/routes**
+
+**/api/v1/routes/{id}**
+
+**/api/v1/alerts**
+
+**/api/v1/meta**
+
+------------------------------------------------------------------------
 ## Available Endpoints
 
 -   **GET /health**\
     Public health check
 
--   **GET /routes**\
+-   **GET /api/v1/meta**
+    Returns API metadata and version information
+  - Does not require API Key
+
+-   **GET /api/v1/routes**\
     Returns a paginated list of transport routes
     -   Pagination: limit, offset
     -   Filtering: status=active | suspended
     -   Requires API Key
 
--   **GET /routes/{id}**\
+-   **GET /api/v1/routes/{id}**\
     Returns a specific route by ID
 
     -   `404` if the route does not exist
     -   Requires API Key
 
--   **GET /routes?status=active\|suspended**\
+-   **GET /api/v1/routes?status=active\|suspended**\
     Filters routes by status
 
     -   `422` if the status value is invalid
 
--   **GET /alerts**\
+-   **GET /api/v1/alerts**\
     Endpoint prepared for future database integration
+
     -   Requires API Key
+
 
 ------------------------------------------------------------------------
 
@@ -142,6 +164,25 @@ Verifies that the API is running correctly.
       "status": "active"
     }
   ]
+}
+```
+
+------------------------------------------------------------------------
+
+## Metadata Endpoint
+
+**GET /api/v1/meta**
+
+Returns general information about the API.
+
+```json
+{
+  "status": "success",
+  "data": {
+    "project_name": "Transport API Backend",
+    "version": "1.0.0",
+    "status": "active",
+  }
 }
 ```
 
@@ -194,6 +235,6 @@ Core backend features are complete:
 Next planned steps:
 
 -   Alerts database integration\
--   API versioning\
+-   API v2 evolution\
 -   Extended metadata and analytics\
 -   External data ingestion
