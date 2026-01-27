@@ -6,7 +6,7 @@ from app.utils.responses import success_response
 
 router = APIRouter(
     prefix="/routes",
-    tags=["routes"]
+    tags=["Routes"]
 )
 
 VALID_STATUSES = {"active", "suspended"}
